@@ -110,10 +110,48 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
+        // 设置视角为指定的方向
+        this.board.setViewingPerspective(side);
+        //以行为单位依次遍历每列
+        //col 列
+        //row 行
+        for(int col=0;col<this.board.size();++col)
+        {
+            int flag=-1;
+            for (int row=this.board.size()-2;row>=0;--row)
+            {
+                int temp=row+1;
+                while(this.board.tile(col,row)!=null)
+                {
+                    while (temp<(this.board.size()-1)&&this.board.tile(col,temp)==null)
+                        ++temp;
 
+                    if(this.board.tile(col,temp)==null) {
+                        this.board.move(col, temp, tile(col, row));
+                        changed = true;
+                        break;
+                    }
+                    else if (this.board.tile(col,temp).value()!=this.board.tile(col,row).value()||flag==temp)
+                    {
+                        this.board.move(col, temp-1,tile(col, row));
+                        changed = true;
+                        break;
+                    }
+                    else if(this.board.tile(col,row).value()==this.board.tile(col,temp).value()&&flag!=temp)
+                    {
+                        this.board.move(col, temp,tile(col, row));
+                        flag=temp;
+                        this.score+=this.board.tile(col,temp).value();
+                        changed = true;
+                        break;
+                    }
+                    else
+                        break;
+                }
+            }
+        }
+        // 恢复视角为默认的 NORTH 视角
+        this.board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +176,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for(int i=0;i<b.size();++i)
+        {
+            for(int j=0;j<b.size();++j)
+            {
+                while(b.tile(i,j)==null)
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -148,6 +194,12 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for(int i=0;i<b.size();++i) {
+            for (int j = 0; j < b.size(); ++j) {
+                while (b.tile(i,j)!=null && b.tile(i, j).value() == MAX_PIECE)
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -159,7 +211,37 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-        return false;
+        if(emptySpaceExists(b))
+        {
+            return true;
+        }
+        else
+        {
+            b.setViewingPerspective(Side.NORTH);
+            for(int i=0;i<b.size();++i)
+            {
+                int temp = b.tile(i, 0).value();
+                for (int j = 1; j < b.size(); ++j)
+                {
+                    if(b.tile(i, j).value() == temp)
+                        return true;
+                    temp=b.tile(i, j).value();
+                }
+            }
+            b.setViewingPerspective(Side.EAST);
+            for(int i=0;i<b.size();++i)
+            {
+                int temp = b.tile(i, 0).value();
+                for (int j = 1; j < b.size(); ++j)
+                {
+                    if(b.tile(i, j).value() == temp)
+                        return true;
+                    temp=b.tile(i, j).value();
+                }
+            }
+            b.setViewingPerspective(Side.SOUTH);
+            return false;
+        }
     }
 
 
