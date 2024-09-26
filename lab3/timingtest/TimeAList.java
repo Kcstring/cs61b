@@ -25,7 +25,7 @@ public class TimeAList {
         AList<Integer> Ns = new AList<>();
         AList<Double> times = new AList<>();
         AList<Integer> opCounts = new AList<>();
-        int count=100000;
+        int count=500;
         for(int i=0;i<8;++i)
         {
             count=count*2;

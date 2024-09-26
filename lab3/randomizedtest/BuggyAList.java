@@ -26,13 +26,19 @@ public class BuggyAList<Item> {
 
     /** Resizes the underlying array to the target capacity. */
     private void resize(int capacity) {
-        if(capacity<=0)
-            throw new IllegalArgumentException("Capacity must be greater than zero.") ;
-        Item[] a= (Item[]) new Object[capacity];
-        // 使用 System.arraycopy 复制元素
-        System.arraycopy(items, 0, a, 0, size);
+        // 检查容量是否有效
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Capacity must be greater than zero.");
+        }
+
+        // 使用反射安全创建数组
+        Item[] newArray = (Item[]) java.lang.reflect.Array.newInstance(Item.class, capacity);
+
+        // 仅复制现有元素，确保不超过新数组的容量
+        System.arraycopy(items, 0, newArray, 0, Math.min(size, capacity));
+
         // 更新 items 引用
-        items = a;
+        items = newArray;
     }
 
     /** Inserts X into the back of the list. */
