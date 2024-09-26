@@ -26,14 +26,11 @@ public class BuggyAList<Item> {
 
     /** Resizes the underlying array to the target capacity. */
     private void resize(int capacity) {
-        // 检查容量是否有效
-        if (capacity <= 0) {
-            throw new IllegalArgumentException("Capacity must be greater than zero.");
+        Item[] a = (Item[]) new Object[capacity];
+        for (int i = 0; i < size; i += 1) {
+            a[i] = items[i];
         }
-
-        Item[] newArray = (Item[]) new Object[capacity];
-        System.arraycopy(items, 0, newArray, 0, Math.min(size, capacity));
-        items = newArray;
+        items = a;
     }
 
     /** Inserts X into the back of the list. */
@@ -62,15 +59,12 @@ public class BuggyAList<Item> {
     /** Deletes item from back of the list and
       * returns deleted item. */
     public Item removeLast() {
+        if ((size < items.length / 4) && (size > 4)) {
+            resize(items.length / 4);
+        }
         Item x = getLast();
         items[size - 1] = null;
         size = size - 1;
-
-        // 在这里检查 size 的值，确保不会传递小于 1 的值
-        if (size < items.length / 4 && items.length > 1) {
-            resize(Math.max(size / 2, 1)); // 确保不会传递小于 1 的值
-        }
-
         return x;
     }
 }
