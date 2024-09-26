@@ -31,13 +31,8 @@ public class BuggyAList<Item> {
             throw new IllegalArgumentException("Capacity must be greater than zero.");
         }
 
-        // 使用反射安全创建数组
-        Item[] newArray = (Item[]) java.lang.reflect.Array.newInstance(Item.class, capacity);
-
-        // 仅复制现有元素，确保不超过新数组的容量
+        Item[] newArray = (Item[]) new Object[capacity];
         System.arraycopy(items, 0, newArray, 0, Math.min(size, capacity));
-
-        // 更新 items 引用
         items = newArray;
     }
 
@@ -67,12 +62,15 @@ public class BuggyAList<Item> {
     /** Deletes item from back of the list and
       * returns deleted item. */
     public Item removeLast() {
-        if ((size < items.length / 4) && (size > 4)) {
-            resize(size / 4);
-        }
         Item x = getLast();
         items[size - 1] = null;
         size = size - 1;
+
+        // 在这里检查 size 的值，确保不会传递小于 1 的值
+        if (size < items.length / 4 && items.length > 1) {
+            resize(Math.max(size / 2, 1)); // 确保不会传递小于 1 的值
+        }
+
         return x;
     }
 }
