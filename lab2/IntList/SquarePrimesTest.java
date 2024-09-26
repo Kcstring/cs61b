@@ -3,6 +3,7 @@ package IntList;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+
 public class SquarePrimesTest {
 
     /**
@@ -23,5 +24,6 @@ public class SquarePrimesTest {
         boolean changed = IntListExercises.squarePrimes(lst);
         assertEquals("289 -> 15 -> 16 -> 289 -> 18", lst.toString());
         assertTrue(changed);
+
     }
 }

@@ -26,10 +26,12 @@ public class BuggyAList<Item> {
 
     /** Resizes the underlying array to the target capacity. */
     private void resize(int capacity) {
-        Item[] a = (Item[]) new Object[capacity];
-        for (int i = 0; i < size; i += 1) {
-            a[i] = items[i];
-        }
+        if(capacity<=0)
+            throw new IllegalArgumentException("Capacity must be greater than zero.") ;
+        Item[] a= (Item[]) new Object[capacity];
+        // 使用 System.arraycopy 复制元素
+        System.arraycopy(items, 0, a, 0, size);
+        // 更新 items 引用
         items = a;
     }
 
